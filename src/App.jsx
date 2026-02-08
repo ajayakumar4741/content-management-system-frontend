@@ -12,7 +12,7 @@ import ProtectedRoute from './ui_components/ProtectedRoute'
 import { getUsername } from './services/apiBlog'
 import NotFoundPage from './pages/NotFoundPage'
 import ErrorBoundary from './pages/ErrorBoundary'
-import FallbackUI from './ui_components/FallBackUi'
+
 
 
 function App() {
