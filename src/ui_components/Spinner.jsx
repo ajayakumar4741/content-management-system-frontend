@@ -1,23 +1,16 @@
-import React from 'react'
+import React from "react";
 import { ClipLoader } from "react-spinners";
 
-const override = {
-  display: "block",
-  margin: "0 auto",
-  borderColor: "green",
-};
 function Spinner() {
+  const size = window.innerWidth < 640 ? 40 : 60;
+
   return (
-    <>
-      <ClipLoader
-        
-        cssOverride={override}
-        size={450}
-        aria-label="Loading Spinner"
-        data-testid="loader"
-      />
-    </>
-  )
+    <ClipLoader
+      size={size}
+      color="green"
+      aria-label="Loading Spinner"
+    />
+  );
 }
 
-export default Spinner
+export default Spinner;
