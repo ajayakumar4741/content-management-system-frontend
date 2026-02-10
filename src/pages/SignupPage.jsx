@@ -14,6 +14,7 @@ import ReCAPTCHA from "react-google-recaptcha";
 
 
 function SignupPage({ updateForm, userInfo, toggleModal }) {
+  console.log("RECAPTCHA KEY:", import.meta.env.VITE_RECAPTCHA_SITE_KEY);
   const { register, handleSubmit, formState, reset, watch } = useForm({ defaultValues: userInfo ? userInfo : {} });
   const { errors } = formState;
   const password = watch("password");
@@ -328,7 +329,7 @@ function SignupPage({ updateForm, userInfo, toggleModal }) {
         setCaptchaError(false); // ✅ clear error once solved
       }}
     />
-
+  
     {captchaError && (
       <small className="text-red-600">
         Please confirm you are not a robot

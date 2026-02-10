@@ -2,7 +2,7 @@ import React from "react";
 import { ClipLoader } from "react-spinners";
 
 function Spinner() {
-  const size = window.innerWidth < 640 ? 40 : 60;
+  const size = window.innerWidth < 640 ? 40 : 460;
 
   return (
     <ClipLoader
