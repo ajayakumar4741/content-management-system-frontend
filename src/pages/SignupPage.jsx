@@ -10,6 +10,7 @@ import SmallSpinner from '@/ui_components/SmallSpinner';
 import { Textarea } from '@/components/ui/textarea';
 import InputErrors from '@/ui_components/InputErrors';
 import axios from 'axios';
+import ReCAPTCHA from "react-google-recaptcha";
 
 
 function SignupPage({ updateForm, userInfo, toggleModal }) {
@@ -17,22 +18,30 @@ function SignupPage({ updateForm, userInfo, toggleModal }) {
   const { errors } = formState;
   const password = watch("password");
   const queryClient = useQueryClient()
-  const [captchaImage, setCaptchaImage] = useState("");
-  const [captchaKey, setCaptchaKey] = useState("");
+  const [captchaError, setCaptchaError] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState(null);
 
-  useEffect(() => {
-    loadCaptcha()
-  }, [])
 
-  const loadCaptcha = async () => {
-    try {
-      const res = await axios.get("http://localhost:8000/api/get_captcha/", { withCredentials: true });
-      setCaptchaKey(res.data.key);
-      setCaptchaImage("http://localhost:8000" + res.data.image_url);
-    } catch (err) {
-      toast.error("Failed to load captcha");
-    }
-  };
+  <ReCAPTCHA
+  sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY}
+  onChange={(token) => setCaptchaToken(token)}
+/>
+
+
+
+  // useEffect(() => {
+  //   loadCaptcha()
+  // }, [])
+
+  // const loadCaptcha = async () => {
+  //   try {
+  //     const res = await axios.get('https://techfolio-dqe1.onrender.com/api/get_captcha/', { withCredentials: true });
+  //     setCaptchaKey(res.data.key);
+  //     setCaptchaImage("https://techfolio-dqe1.onrender.com" + res.data.image_url);
+  //   } catch (err) {
+  //     toast.error("Failed to load captcha");
+  //   }
+  // };
 
 
   const updateProfileMutation = useMutation({
@@ -79,31 +88,69 @@ function SignupPage({ updateForm, userInfo, toggleModal }) {
 
 
 
+  // function onSubmitData(data) {
+  //   if (!captchaToken) {
+  //   toast.error("Please verify captcha");
+  //   return;
+  // }
+
+  
+  
+  //   if (updateForm) {
+  //     const formData = new FormData()
+  //     formData.append('username', data.username)
+  //     formData.append('first_name', data.first_name)
+  //     formData.append('last_name', data.last_name)
+  //     formData.append('job_title', data.job_title)
+  //     formData.append('bio', data.bio)
+  //     if (data.profile_picture && data.profile_picture[0]) {
+  //       if (data.profile_picture[0] != '/') {
+  //         formData.append('profile_picture', data.profile_picture[0])
+  //       }
+  //     }
+  //     updateProfileMutation.mutate(formData)
+
+  //   }
+  //   else {
+  //     mutation.mutate({
+  //   ...data,
+  //   recaptcha_token: captchaToken,
+  //     });
+  //   }
+
+  // }
+
   function onSubmitData(data) {
-    if (updateForm) {
-      const formData = new FormData()
-      formData.append('username', data.username)
-      formData.append('first_name', data.first_name)
-      formData.append('last_name', data.last_name)
-      formData.append('job_title', data.job_title)
-      formData.append('bio', data.bio)
-      if (data.profile_picture && data.profile_picture[0]) {
-        if (data.profile_picture[0] != '/') {
-          formData.append('profile_picture', data.profile_picture[0])
-        }
-      }
-      updateProfileMutation.mutate(formData)
+  // 🔹 UPDATE PROFILE
+  if (updateForm) {
+    const formData = new FormData();
+    formData.append("username", data.username);
+    formData.append("first_name", data.first_name);
+    formData.append("last_name", data.last_name);
+    formData.append("job_title", data.job_title);
+    formData.append("bio", data.bio);
 
-    }
-    else {
-      mutation.mutate({
-        ...data,
-        captcha_0: captchaKey,
-        captcha_1: data.captcha_value
-      });
+    if (data.profile_picture?.[0]) {
+      formData.append("profile_picture", data.profile_picture[0]);
     }
 
+    updateProfileMutation.mutate(formData);
+    return;
   }
+
+  // 🔹 SIGNUP (captcha required)
+  if (!captchaToken) {
+    setCaptchaError(true)
+    toast.error("Please verify captcha");
+    return;
+  }
+
+  mutation.mutate({
+    ...data,
+    recaptcha_token: captchaToken,
+  });
+}
+
 
   return (
     <form
@@ -270,32 +317,26 @@ function SignupPage({ updateForm, userInfo, toggleModal }) {
           {errors?.confirmPassword && <small className='text-red-700'>{errors.confirmPassword.message}</small>}
         </div>}
 
-      {!updateForm && (
-        <div className="flex flex-col gap-2 mb-2">
-          <Label htmlFor="captcha">Captcha</Label>
-          {captchaImage && (
-            <img
-              src={`${captchaImage}?t=${Date.now()}`}
-              alt="captcha"
-              crossOrigin="use-credentials"
-              className="border p-2 mb-2"
-            />
-          )}
-          <Input
-            type="text"
-            id="captcha"
-            placeholder="Enter captcha text"
-            {...register('captcha_value', {
-              required: 'Captcha is required'
-            })}
-            className="border-2 border-[#141624] dark:border-[#3B3C4A] focus:outline-0 h-[40px] w-[300px]"
-          />
-          {errors?.captcha_value && <small className='text-red-700'>{errors.captcha_value.message}</small>}
-          <button type="button" onClick={loadCaptcha} className="text-blue-600 underline mt-1">
-            Reload Captcha
-          </button>
-        </div>
-      )}
+  {!updateForm && (
+  <div className="flex flex-col gap-2 mb-4">
+    <Label>Verify you are human</Label>
+
+    <ReCAPTCHA
+      sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY}
+      onChange={(token) => {
+        setCaptchaToken(token);
+        setCaptchaError(false); // ✅ clear error once solved
+      }}
+    />
+
+    {captchaError && (
+      <small className="text-red-600">
+        Please confirm you are not a robot
+      </small>
+    )}
+  </div>
+)}
+
 
 
 
