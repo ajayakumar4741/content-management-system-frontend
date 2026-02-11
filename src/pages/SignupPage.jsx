@@ -75,15 +75,15 @@ function SignupPage({ updateForm, userInfo, toggleModal }) {
     onSuccess: () => {
       toast.success("Account created successfully!");
       reset();
-      loadCaptcha();
+      
     },
     onError: (err) => {
       const msg =
-        err?.response?.data?.captcha?.[0] ||
-        "Invalid captcha. Please try again.";
+        err?.response?.data?.[0] ||
+        "An Error Occured. Please try again later.";
 
       toast.error(msg);
-      loadCaptcha();
+      
     },
   });
 
