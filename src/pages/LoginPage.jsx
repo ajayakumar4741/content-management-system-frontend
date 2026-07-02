@@ -6,6 +6,8 @@ import { useForm } from 'react-hook-form';
 import { useMutation } from '@tanstack/react-query';
 import { toast } from 'react-toastify';
 import SmallSpinner from '@/ui_components/SmallSpinner';
+import InputErrors from '@/ui_components/InputErrors';
+import GoogleAuth from '@/components/ui/oauth';
 import { getUsername, signin } from '@/services/apiBlog';
 
 function LoginPage({setIsAuthenticated,setUsername}) {
@@ -44,6 +46,15 @@ function LoginPage({setIsAuthenticated,setUsername}) {
         <p>Welcome back! Log in to continue.</p>
       </div>
 
+      <div className="w-full flex flex-col items-center gap-2 mb-2">
+        <GoogleAuth />
+        <div className="flex items-center gap-2 w-full max-w-[300px]">
+          <div className="h-px flex-1 bg-gray-300 dark:bg-gray-700" />
+          <span className="text-xs text-gray-500">or</span>
+          <div className="h-px flex-1 bg-gray-300 dark:bg-gray-700" />
+        </div>
+      </div>
+
       <div className="flex flex-col gap-2 mb-2">
         <Label htmlFor="username" className="dark:text-[97989F]">
           Username
@@ -57,7 +68,7 @@ function LoginPage({setIsAuthenticated,setUsername}) {
           className="border-2 border-[#141624] dark:border-[#3B3C4A] focus:outline-0 h-[40px] w-[300px]"
         />
         {errors?.username?.message && (
-          <InputError error={errors.username.message} />
+          <InputErrors error={errors.username.message} />
         )}
       </div>
 
@@ -72,7 +83,7 @@ function LoginPage({setIsAuthenticated,setUsername}) {
           className="border-2 border-[#141624] dark:border-[#3B3C4A] focus:outline-0 h-[40px]  w-[300px]"
         />
         {errors?.password?.message && (
-          <InputError error={errors.password.message} />
+          <InputErrors error={errors.password.message} />
         )}
       </div>
 

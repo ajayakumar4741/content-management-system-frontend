@@ -9,7 +9,7 @@ import { toast } from 'react-toastify';
 import SmallSpinner from '@/ui_components/SmallSpinner';
 import { Textarea } from '@/components/ui/textarea';
 import InputErrors from '@/ui_components/InputErrors';
-import axios from 'axios';
+import GoogleAuth from '@/components/ui/oauth';
 import ReCAPTCHA from "react-google-recaptcha";
 
 
@@ -30,19 +30,7 @@ function SignupPage({ updateForm, userInfo, toggleModal }) {
 
 
 
-  // useEffect(() => {
-  //   loadCaptcha()
-  // }, [])
-
-  // const loadCaptcha = async () => {
-  //   try {
-  //     const res = await axios.get('https://techfolio-dqe1.onrender.com/api/get_captcha/', { withCredentials: true });
-  //     setCaptchaKey(res.data.key);
-  //     setCaptchaImage("https://techfolio-dqe1.onrender.com" + res.data.image_url);
-  //   } catch (err) {
-  //     toast.error("Failed to load captcha");
-  //   }
-  // };
+  
 
 
   const updateProfileMutation = useMutation({
@@ -57,18 +45,7 @@ function SignupPage({ updateForm, userInfo, toggleModal }) {
     }
   })
 
-  // const mutation = useMutation({
-  //   mutationFn: (data) => registerUser(data),
-  //   onSuccess: () => {
-  //     toast.success("Account created successfully!");
-  //     reset();
-  //     loadCaptcha(); // refresh captcha after success
-  //   },
-  //   onError: (err) => {
-  //     toast.error(err);
-  //     loadCaptcha(); // refresh captcha after failure
-  //   }
-  // });
+
 
   const mutation = useMutation({
     mutationFn: registerUser,
@@ -89,37 +66,7 @@ function SignupPage({ updateForm, userInfo, toggleModal }) {
 
 
 
-  // function onSubmitData(data) {
-  //   if (!captchaToken) {
-  //   toast.error("Please verify captcha");
-  //   return;
-  // }
 
-  
-  
-  //   if (updateForm) {
-  //     const formData = new FormData()
-  //     formData.append('username', data.username)
-  //     formData.append('first_name', data.first_name)
-  //     formData.append('last_name', data.last_name)
-  //     formData.append('job_title', data.job_title)
-  //     formData.append('bio', data.bio)
-  //     if (data.profile_picture && data.profile_picture[0]) {
-  //       if (data.profile_picture[0] != '/') {
-  //         formData.append('profile_picture', data.profile_picture[0])
-  //       }
-  //     }
-  //     updateProfileMutation.mutate(formData)
-
-  //   }
-  //   else {
-  //     mutation.mutate({
-  //   ...data,
-  //   recaptcha_token: captchaToken,
-  //     });
-  //   }
-
-  // }
 
   function onSubmitData(data) {
   // 🔹 UPDATE PROFILE
@@ -166,6 +113,16 @@ function SignupPage({ updateForm, userInfo, toggleModal }) {
         </p>
       </div>
 
+      {!updateForm && (
+        <div className="w-full flex flex-col items-center gap-2 mb-2">
+          <GoogleAuth />
+          <div className="flex items-center gap-2 w-full max-w-[300px]">
+            <div className="h-px flex-1 bg-gray-300 dark:bg-gray-700" />
+            <span className="text-xs text-gray-500">or</span>
+            <div className="h-px flex-1 bg-gray-300 dark:bg-gray-700" />
+          </div>
+        </div>
+      )}
 
       <div className="flex flex-col gap-2 mb-2">
         <Label htmlFor="username" className="dark:text-[97989F]">Username</Label>
@@ -339,7 +296,7 @@ function SignupPage({ updateForm, userInfo, toggleModal }) {
 )}
 
 
-
+      
 
       {/* Submit Button */}
       <div className="w-full flex items-center justify-center flex-col my-4">
