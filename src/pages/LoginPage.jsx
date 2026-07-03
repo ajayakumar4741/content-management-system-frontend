@@ -45,9 +45,24 @@ function LoginPage({setIsAuthenticated,setUsername}) {
         <h3 className="font-semibold text-2xl">Signin Form</h3>
         <p>Welcome back! Log in to continue.</p>
       </div>
-
+      {/* google auth */}
       <div className="w-full flex flex-col items-center gap-2 mb-2">
-        <GoogleAuth />
+        <GoogleAuth
+          onSuccess={(data) => {
+            localStorage.setItem('access', data.access);
+            localStorage.setItem('refresh', data.refresh);
+            setIsAuthenticated(true);
+            setUsername(data.user.username);
+            toast.success('Signin successfully!!!');
+            const from = location?.state?.from?.pathname || '/';
+            navigate(from, { replace: true });
+          }}
+          onError={(err) => {
+            const message = err?.response?.data?.detail || err?.response?.data?.error || err?.message || 'Google sign-in failed';
+            toast.error(message);
+            console.error('Google sign-in error:', err.response?.data || err);
+          }}
+        />
         <div className="flex items-center gap-2 w-full max-w-[300px]">
           <div className="h-px flex-1 bg-gray-300 dark:bg-gray-700" />
           <span className="text-xs text-gray-500">or</span>

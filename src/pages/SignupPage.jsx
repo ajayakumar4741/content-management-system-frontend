@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { registerUser, updateProfile } from '@/services/apiBlog';
@@ -13,7 +13,8 @@ import GoogleAuth from '@/components/ui/oauth';
 import ReCAPTCHA from "react-google-recaptcha";
 
 
-function SignupPage({ updateForm, userInfo, toggleModal }) {
+function SignupPage({ updateForm, userInfo, toggleModal, setIsAuthenticated, setUsername }) {
+  const navigate = useNavigate();
   console.log("RECAPTCHA KEY:", import.meta.env.VITE_RECAPTCHA_SITE_KEY);
   const { register, handleSubmit, formState, reset, watch } = useForm({ defaultValues: userInfo ? userInfo : {} });
   const { errors } = formState;
@@ -22,15 +23,6 @@ function SignupPage({ updateForm, userInfo, toggleModal }) {
   const [captchaError, setCaptchaError] = useState(false);
   const [captchaToken, setCaptchaToken] = useState(null);
 
-
-  <ReCAPTCHA
-  sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY}
-  onChange={(token) => setCaptchaToken(token)}
-/>
-
-
-
-  
 
 
   const updateProfileMutation = useMutation({
@@ -45,6 +37,7 @@ function SignupPage({ updateForm, userInfo, toggleModal }) {
     }
   })
 
+  
 
 
   const mutation = useMutation({
@@ -115,7 +108,21 @@ function SignupPage({ updateForm, userInfo, toggleModal }) {
 
       {!updateForm && (
         <div className="w-full flex flex-col items-center gap-2 mb-2">
-          <GoogleAuth />
+          <GoogleAuth
+            onSuccess={(data) => {
+              localStorage.setItem('access', data.access);
+              localStorage.setItem('refresh', data.refresh);
+              setIsAuthenticated?.(true);
+              setUsername?.(data.user.username);
+              toast.success('Signed in with Google successfully!');
+              navigate('/', { replace: true });
+            }}
+            onError={(err) => {
+              const message = err?.response?.data?.detail || err?.response?.data?.error || err?.message || 'Google sign-up failed';
+              toast.error(message);
+              console.error('Google sign-up error:', err.response?.data || err);
+            }}
+          />
           <div className="flex items-center gap-2 w-full max-w-[300px]">
             <div className="h-px flex-1 bg-gray-300 dark:bg-gray-700" />
             <span className="text-xs text-gray-500">or</span>

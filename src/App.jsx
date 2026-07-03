@@ -4,7 +4,7 @@ import AppLayout from './ui_components/AppLayout'
 import HomePage from './pages/HomePage'
 import DetailPage from './pages/DetailPage'
 import ProfilePage from './pages/ProfilePage'
-import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import SignupPage from './pages/SignupPage'
 import CreatePostPage from './pages/CreatePostPage'
 import LoginPage from './pages/LoginPage'
@@ -13,8 +13,7 @@ import { getUsername } from './services/apiBlog'
 import NotFoundPage from './pages/NotFoundPage'
 import ErrorBoundary from './pages/ErrorBoundary'
 
-
-
+const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID || ''
 function App() {
   const [username,setUsername] = useState(null)
   const [isAuthenticated,setIsAuthenticated] = useState(false)
@@ -30,23 +29,19 @@ function App() {
     }
   },[data])
   return (
-    
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<AppLayout isAuthenticated={isAuthenticated} setIsAuthenticated={setIsAuthenticated} username={username} setUsername={setUsername} />}>
-      <Route index element={<HomePage />} />
-      <Route path='*' element={<NotFoundPage />}/>
-      <Route path='profile/:username' element={<ProfilePage authUsername={username} />} />
-      <Route path="blogs/:slug" element={<DetailPage username={username} isAuthenticated={isAuthenticated} />} />
-      <Route path='/signup' element={<SignupPage />} />
-      <Route path='/create_post' element={<ProtectedRoute><CreatePostPage isAuthenticated={isAuthenticated} /></ProtectedRoute>} />
-      <Route path='/login' element={<ErrorBoundary> <LoginPage setIsAuthenticated={setIsAuthenticated} setUsername={setUsername} /></ErrorBoundary>} />
-      
-    </Route>
-
+          <Route index element={<HomePage />} />
+          <Route path='*' element={<NotFoundPage />}/>
+          <Route path='profile/:username' element={<ProfilePage authUsername={username} />} />
+          <Route path="blogs/:slug" element={<DetailPage username={username} isAuthenticated={isAuthenticated} />} />
+          <Route path='/signup' element={<SignupPage setIsAuthenticated={setIsAuthenticated} setUsername={setUsername} />} />
+          <Route path='/create_post' element={<ProtectedRoute><CreatePostPage isAuthenticated={isAuthenticated} /></ProtectedRoute>} />
+          <Route path='/login' element={<ErrorBoundary><LoginPage setIsAuthenticated={setIsAuthenticated} setUsername={setUsername} /></ErrorBoundary>} />
+        </Route>
       </Routes>
     </BrowserRouter>
-  
   )
 }
 

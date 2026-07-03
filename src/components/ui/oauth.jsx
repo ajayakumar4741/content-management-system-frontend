@@ -1,6 +1,8 @@
 import { GoogleLogin } from '@react-oauth/google';
+import { useNavigate } from 'react-router-dom';
+import api from '@/api';
 
-function GoogleAuth() {
+function GoogleAuth({ onSuccess, onError }) {
   const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
   if (!clientId) {
@@ -15,19 +17,42 @@ function GoogleAuth() {
     <GoogleLogin
       clientId={clientId}
       onSuccess={async (response) => {
-        const res = await fetch("http://localhost:8000/api/auth/google/", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ credential: response.credential }),
-        });
+        const credential = response?.credential || response?.tokenId;
+        if (!credential) {
+          const error = new Error('No Google credential returned');
+          console.error('GoogleLogin onSuccess response:', response);
+          if (onError) {
+            onError(error);
+          }
+          return;
+        }
 
-        const data = await res.json();
-        console.log(data);
+        try {
+          const res = await api.post('/api/auth/google/', {
+            credential,
+          });
+
+          const data = res.data;
+          localStorage.setItem('access', data.access);
+          localStorage.setItem('refresh', data.refresh);
+
+          if (onSuccess) {
+            onSuccess(data);
+          } else {
+            navigate('/', { replace: true });
+          }
+        } catch (err) {
+          console.error('Google auth failed:', err.response?.data || err.message || err);
+          if (onError) {
+            onError(err);
+          }
+        }
       }}
-      onError={() => {
-        console.log("Login Failed");
+      onError={(err) => {
+        console.log('Login Failed', err);
+        if (onError) {
+          onError(err || new Error('Google login failed'));
+        }
       }}
     />
   );
