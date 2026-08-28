@@ -31,7 +31,7 @@ function LoginPage({setIsAuthenticated,setUsername}) {
     }
   })
   function onSubmit(data){
-    console.log(data)
+    
     mutation.mutate(data)
   } 
   return (
