@@ -22,7 +22,7 @@ export async function getBlog(slug){
 
 export async function googleLogin(credential) {
   try {
-    const response = await api.post("google-login/", { credential });
+    const response = await api.post("api/auth/google/", { credential });
     return response.data; // { access, refresh, user }
   } catch (error) {
     throw new Error(error.response?.data?.error || "Google login failed");

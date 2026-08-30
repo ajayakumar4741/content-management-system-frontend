@@ -4,7 +4,7 @@ import { Label } from "@/components/ui/label";
 import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { registerUser, updateProfile } from '@/services/apiBlog';
+import { registerUser, updateProfile, googleLogin } from '@/services/apiBlog';
 import { toast } from 'react-toastify';
 import SmallSpinner from '@/ui_components/SmallSpinner';
 import { Textarea } from '@/components/ui/textarea';
