@@ -28,7 +28,7 @@ function GoogleAuth({ onSuccess, onError }) {
         }
 
         try {
-          const res = await api.post('/api/auth/google/', {
+          const res = await api.post('api/auth/google/', {
             credential,
           });
 
