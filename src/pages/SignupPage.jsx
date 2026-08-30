@@ -15,7 +15,7 @@ import ReCAPTCHA from "react-google-recaptcha";
 
 function SignupPage({ updateForm, userInfo, toggleModal, setIsAuthenticated, setUsername }) {
   const navigate = useNavigate();
-  console.log("RECAPTCHA KEY:", import.meta.env.VITE_RECAPTCHA_SITE_KEY);
+  // console.log("RECAPTCHA KEY:", import.meta.env.VITE_RECAPTCHA_SITE_KEY);
   const { register, handleSubmit, formState, reset, watch } = useForm({ defaultValues: userInfo ? userInfo : {} });
   const { errors } = formState;
   const password = watch("password");
@@ -37,7 +37,7 @@ function SignupPage({ updateForm, userInfo, toggleModal, setIsAuthenticated, set
     }
   })
 
-  
+
 
 
   const mutation = useMutation({
@@ -45,7 +45,7 @@ function SignupPage({ updateForm, userInfo, toggleModal, setIsAuthenticated, set
     onSuccess: () => {
       toast.success("Account created successfully!");
       reset();
-      
+
     },
     onError: (err) => {
       const msg =
@@ -53,7 +53,7 @@ function SignupPage({ updateForm, userInfo, toggleModal, setIsAuthenticated, set
         "An Error Occured. Please try again later.";
 
       toast.error(msg);
-      
+
     },
   });
 
@@ -62,35 +62,35 @@ function SignupPage({ updateForm, userInfo, toggleModal, setIsAuthenticated, set
 
 
   function onSubmitData(data) {
-  // 🔹 UPDATE PROFILE
-  if (updateForm) {
-    const formData = new FormData();
-    formData.append("username", data.username);
-    formData.append("first_name", data.first_name);
-    formData.append("last_name", data.last_name);
-    formData.append("job_title", data.job_title);
-    formData.append("bio", data.bio);
+    // 🔹 UPDATE PROFILE
+    if (updateForm) {
+      const formData = new FormData();
+      formData.append("username", data.username);
+      formData.append("first_name", data.first_name);
+      formData.append("last_name", data.last_name);
+      formData.append("job_title", data.job_title);
+      formData.append("bio", data.bio);
 
-    if (data.profile_picture?.[0]) {
-      formData.append("profile_picture", data.profile_picture[0]);
+      if (data.profile_picture?.[0]) {
+        formData.append("profile_picture", data.profile_picture[0]);
+      }
+
+      updateProfileMutation.mutate(formData);
+      return;
     }
 
-    updateProfileMutation.mutate(formData);
-    return;
-  }
+    // 🔹 SIGNUP (captcha required)
+    if (!captchaToken) {
+      setCaptchaError(true)
+      toast.error("Please verify captcha");
+      return;
+    }
 
-  // 🔹 SIGNUP (captcha required)
-  if (!captchaToken) {
-    setCaptchaError(true)
-    toast.error("Please verify captcha");
-    return;
+    mutation.mutate({
+      ...data,
+      recaptcha_token: captchaToken,
+    });
   }
-
-  mutation.mutate({
-    ...data,
-    recaptcha_token: captchaToken,
-  });
-}
 
 
   return (
@@ -108,7 +108,7 @@ function SignupPage({ updateForm, userInfo, toggleModal, setIsAuthenticated, set
 
       {!updateForm && (
         <div className="w-full flex flex-col items-center gap-2 mb-2">
-          <GoogleAuth
+          {/* <GoogleAuth
             onSuccess={(data) => {
               localStorage.setItem('access', data.access);
               localStorage.setItem('refresh', data.refresh);
@@ -121,6 +121,25 @@ function SignupPage({ updateForm, userInfo, toggleModal, setIsAuthenticated, set
               const message = err?.response?.data?.detail || err?.response?.data?.error || err?.message || 'Google sign-up failed';
               toast.error(message);
               console.error('Google sign-up error:', err.response?.data || err);
+            }}
+          /> */}
+          <GoogleAuth
+            onSuccess={async (googleResponse) => {
+              try {
+                const data = await googleLogin(googleResponse.credential);
+                localStorage.setItem("access", data.access);
+                localStorage.setItem("refresh", data.refresh);
+                setIsAuthenticated?.(true);
+                setUsername?.(data.user.username);
+                toast.success("Signed in with Google successfully!");
+                navigate("/", { replace: true });
+              } catch (err) {
+                toast.error(err.message);
+              }
+            }}
+            onError={(err) => {
+              toast.error("Google sign-up failed");
+              console.error(err);
             }}
           />
           <div className="flex items-center gap-2 w-full max-w-[300px]">
@@ -282,28 +301,28 @@ function SignupPage({ updateForm, userInfo, toggleModal, setIsAuthenticated, set
           {errors?.confirmPassword && <small className='text-red-700'>{errors.confirmPassword.message}</small>}
         </div>}
 
-  {!updateForm && (
-  <div className="flex flex-col gap-2 mb-4">
-    <Label>Verify you are human</Label>
+      {!updateForm && (
+        <div className="flex flex-col gap-2 mb-4">
+          <Label>Verify you are human</Label>
 
-    <ReCAPTCHA
-      sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY}
-      onChange={(token) => {
-        setCaptchaToken(token);
-        setCaptchaError(false); // ✅ clear error once solved
-      }}
-    />
-  
-    {captchaError && (
-      <small className="text-red-600">
-        Please confirm you are not a robot
-      </small>
-    )}
-  </div>
-)}
+          <ReCAPTCHA
+            sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY}
+            onChange={(token) => {
+              setCaptchaToken(token);
+              setCaptchaError(false); // ✅ clear error once solved
+            }}
+          />
+
+          {captchaError && (
+            <small className="text-red-600">
+              Please confirm you are not a robot
+            </small>
+          )}
+        </div>
+      )}
 
 
-      
+
 
       {/* Submit Button */}
       <div className="w-full flex items-center justify-center flex-col my-4">

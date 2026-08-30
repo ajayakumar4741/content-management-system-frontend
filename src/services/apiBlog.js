@@ -20,6 +20,16 @@ export async function getBlog(slug){
     }
 }
 
+export async function googleLogin(credential) {
+  try {
+    const response = await api.post("google-login/", { credential });
+    return response.data; // { access, refresh, user }
+  } catch (error) {
+    throw new Error(error.response?.data?.error || "Google login failed");
+  }
+}
+
+
 export async function registerUser(data) {
   try {
     const response = await api.post("register/", data);
