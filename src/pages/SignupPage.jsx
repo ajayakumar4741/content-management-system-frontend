@@ -108,31 +108,23 @@ function SignupPage({ updateForm, userInfo, toggleModal, setIsAuthenticated, set
 
       {!updateForm && (
         <div className="w-full flex flex-col items-center gap-2 mb-2">
-          {/* <GoogleAuth
-            onSuccess={(data) => {
-              localStorage.setItem('access', data.access);
-              localStorage.setItem('refresh', data.refresh);
-              setIsAuthenticated?.(true);
-              setUsername?.(data.user.username);
-              toast.success('Signed in with Google successfully!');
-              navigate('/', { replace: true });
-            }}
-            onError={(err) => {
-              const message = err?.response?.data?.detail || err?.response?.data?.error || err?.message || 'Google sign-up failed';
-              toast.error(message);
-              console.error('Google sign-up error:', err.response?.data || err);
-            }}
-          /> */}
+          
           <GoogleAuth
             onSuccess={(data) => {
+              // ✅ Save backend SimpleJWT tokens to localStorage
+              if (data.access && data.refresh) {
+                localStorage.setItem('access', data.access);
+                localStorage.setItem('refresh', data.refresh);
+              }
               setIsAuthenticated?.(true);
               setUsername?.(data.user.username);
               toast.success("Signed in with Google successfully!");
               navigate("/", { replace: true });
             }}
             onError={(err) => {
-              toast.error("Google sign-up failed");
-              console.error(err);
+              const msg = err?.response?.data?.error || err?.message || "Google sign-up failed";
+              toast.error(msg);
+              console.error("Google Auth Error:", err);
             }}
           />
           <div className="flex items-center gap-2 w-full max-w-[300px]">
