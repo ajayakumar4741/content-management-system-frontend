@@ -4,7 +4,7 @@ import { Label } from "@/components/ui/label";
 import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { registerUser, updateProfile, googleLogin } from '@/services/apiBlog';
+import { registerUser, updateProfile } from '@/services/apiBlog';
 import { toast } from 'react-toastify';
 import SmallSpinner from '@/ui_components/SmallSpinner';
 import { Textarea } from '@/components/ui/textarea';
@@ -124,18 +124,11 @@ function SignupPage({ updateForm, userInfo, toggleModal, setIsAuthenticated, set
             }}
           /> */}
           <GoogleAuth
-            onSuccess={async (googleResponse) => {
-              try {
-                const data = await googleLogin(googleResponse.credential);
-                localStorage.setItem("access", data.access);
-                localStorage.setItem("refresh", data.refresh);
-                setIsAuthenticated?.(true);
-                setUsername?.(data.user.username);
-                toast.success("Signed in with Google successfully!");
-                navigate("/", { replace: true });
-              } catch (err) {
-                toast.error(err.message);
-              }
+            onSuccess={(data) => {
+              setIsAuthenticated?.(true);
+              setUsername?.(data.user.username);
+              toast.success("Signed in with Google successfully!");
+              navigate("/", { replace: true });
             }}
             onError={(err) => {
               toast.error("Google sign-up failed");
