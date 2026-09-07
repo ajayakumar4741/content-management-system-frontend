@@ -17,7 +17,16 @@ function Footer() {
     }
 
     try {
-      const response = await api.post("api/subscribe/", { email });
+      const response = await api.post(
+        "api/subscribe/",
+        { email },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+        }
+      );
       setMessage(response.data.message || "Subscription successful! Check your inbox.");
       setEmail("");
     } catch (error) {
