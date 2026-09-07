@@ -88,7 +88,11 @@ function Footer() {
           <button onClick={handleSubscribe} className="bg-[#4B6BFB] text-[#FFFFFF] text-[16px] rounded-md w-full py-3">
             Subscribe
           </button>
-          {message && <p className="text-sm mt-2 text-green-600">{message}</p>}
+          {message && (
+            <p className={`text-sm mt-2 ${message.startsWith("Subscription successful") ? "text-green-600" : "text-red-600"}`}>
+              {message}
+            </p>
+          )}
         </div>
       </div>
 
