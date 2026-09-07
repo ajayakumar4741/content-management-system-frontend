@@ -17,8 +17,8 @@ function Footer() {
     }
 
     try {
-      await api.post("api/subscribe/", { email });
-      setMessage("Subscription successful! Check your inbox.");
+      const response = await api.post("api/subscribe/", { email });
+      setMessage(response.data.message || "Subscription successful! Check your inbox.");
       setEmail("");
     } catch (error) {
       const validationError = error.response?.data?.email?.[0];
@@ -89,7 +89,7 @@ function Footer() {
             Subscribe
           </button>
           {message && (
-            <p className={`text-sm mt-2 ${message.startsWith("Subscription successful") ? "text-green-600" : "text-red-600"}`}>
+            <p className={`text-sm mt-2 ${message.startsWith("Subscription successful") || message.startsWith("This email is already subscribed") ? "text-green-600" : "text-red-600"}`}>
               {message}
             </p>
           )}
