@@ -4,6 +4,7 @@ import { FaFacebookF } from "react-icons/fa";
 import { BsTwitterX } from "react-icons/bs";
 import { FaYoutube } from "react-icons/fa";
 import { CiMail } from "react-icons/ci";
+import api from "@/api";
 
 function Footer() {
   const [email, setEmail] = useState("");
@@ -16,22 +17,12 @@ function Footer() {
     }
 
     try {
-      const response = await fetch("http://localhost:8000/api/subscribe/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email }),
-      });
-
-      if (response.ok) {
-        setMessage("Subscription successful! Check your inbox.");
-        setEmail("");
-      } else {
-        setMessage("Subscription failed. Try again.");
-      }
+      await api.post("api/subscribe/", { email });
+      setMessage("Subscription successful! Check your inbox.");
+      setEmail("");
     } catch (error) {
-      setMessage("Error connecting to server.");
+      const validationError = error.response?.data?.email?.[0];
+      setMessage(validationError || "Subscription failed. Try again.");
     }
   };
 
