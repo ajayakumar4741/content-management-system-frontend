@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Link, useLocation, useNavigate } from 'react-router-dom';
@@ -9,8 +9,10 @@ import SmallSpinner from '@/ui_components/SmallSpinner';
 import InputErrors from '@/ui_components/InputErrors';
 import GoogleAuth from '@/components/ui/oauth';
 import { getUsername, signin } from '@/services/apiBlog';
+import { Eye, EyeOff } from 'lucide-react';
 
 function LoginPage({setIsAuthenticated,setUsername}) {
+  const [showPassword, setShowPassword] = useState(false)
   const {register,handleSubmit,formState} = useForm()
   const {errors} = formState
   const location = useLocation()
@@ -89,14 +91,25 @@ function LoginPage({setIsAuthenticated,setUsername}) {
 
       <div className="flex flex-col gap-2 mb-2">
         <Label htmlFor="password">Password</Label>
-        <Input
-          type="password"
-          id="password"
-          disabled={mutation.isPending}
-          placeholder="Enter password"
-          {...register("password", { required: "Password is required" })}
-          className="border-2 border-[#141624] dark:border-[#3B3C4A] focus:outline-0 h-[40px]  w-[300px]"
-        />
+        <div className="relative w-[300px]">
+          <Input
+            type={showPassword ? "text" : "password"}
+            id="password"
+            disabled={mutation.isPending}
+            placeholder="Enter password"
+            {...register("password", { required: "Password is required" })}
+            className="border-2 border-[#141624] dark:border-[#3B3C4A] focus:outline-0 h-[40px] w-full pr-10"
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword((current) => !current)}
+            disabled={mutation.isPending}
+            aria-label={showPassword ? "Hide password" : "Show password"}
+            className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-600 hover:text-[#4B6BFB] disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+          </button>
+        </div>
         {errors?.password?.message && (
           <InputErrors error={errors.password.message} />
         )}

@@ -11,6 +11,7 @@ import { Textarea } from '@/components/ui/textarea';
 import InputErrors from '@/ui_components/InputErrors';
 import GoogleAuth from '@/components/ui/oauth';
 import ReCAPTCHA from "react-google-recaptcha";
+import { Eye, EyeOff } from 'lucide-react';
 
 
 function SignupPage({ updateForm, userInfo, toggleModal, setIsAuthenticated, setUsername }) {
@@ -22,6 +23,8 @@ function SignupPage({ updateForm, userInfo, toggleModal, setIsAuthenticated, set
   const queryClient = useQueryClient()
   const [captchaError, setCaptchaError] = useState(false);
   const [captchaToken, setCaptchaToken] = useState(null);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
 
 
@@ -250,39 +253,59 @@ function SignupPage({ updateForm, userInfo, toggleModal, setIsAuthenticated, set
       {updateForm ||
         <div className="flex flex-col gap-2 mb-2">
           <Label htmlFor="password">Password</Label>
-          <Input
-            type="password"
-            id="password"
-            placeholder="Enter password"
-            {...register('password', {
-              required: 'Password is required',
-              minLength: {
-                value: 8,
-                message: "Password must be at least 8 characters long"
-              }
-            })}
-            className="border-2 border-[#141624] dark:border-[#3B3C4A] focus:outline-0 h-[40px] w-[300px]"
-          />
+          <div className="relative w-[300px]">
+            <Input
+              type={showPassword ? "text" : "password"}
+              id="password"
+              placeholder="Enter password"
+              {...register('password', {
+                required: 'Password is required',
+                minLength: {
+                  value: 8,
+                  message: "Password must be at least 8 characters long"
+                }
+              })}
+              className="border-2 border-[#141624] dark:border-[#3B3C4A] focus:outline-0 h-[40px] w-full pr-10"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword((current) => !current)}
+              aria-label={showPassword ? "Hide password" : "Show password"}
+              className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-600 hover:text-[#4B6BFB]"
+            >
+              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+            </button>
+          </div>
           {errors?.password && <small className='text-red-700'>{errors.password.message}</small>}
         </div>}
 
       {updateForm ||
         <div className="flex flex-col gap-2 mb-2">
           <Label htmlFor="confirmPassword">Confirm Password</Label>
-          <Input
-            type="password"
-            id="confirmPassword"
-            placeholder="Confirm password"
-            {...register('confirmPassword', {
-              required: 'Confirm password is required',
-              minLength: {
-                value: 8,
-                message: "Password must be at least 8 characters long"
-              },
-              validate: (value) => value === password || 'Passwords do not match'
-            })}
-            className="border-2 border-[#141624] dark:border-[#3B3C4A] focus:outline-0 h-[40px] w-[300px]"
-          />
+          <div className="relative w-[300px]">
+            <Input
+              type={showConfirmPassword ? "text" : "password"}
+              id="confirmPassword"
+              placeholder="Confirm password"
+              {...register('confirmPassword', {
+                required: 'Confirm password is required',
+                minLength: {
+                  value: 8,
+                  message: "Password must be at least 8 characters long"
+                },
+                validate: (value) => value === password || 'Passwords do not match'
+              })}
+              className="border-2 border-[#141624] dark:border-[#3B3C4A] focus:outline-0 h-[40px] w-full pr-10"
+            />
+            <button
+              type="button"
+              onClick={() => setShowConfirmPassword((current) => !current)}
+              aria-label={showConfirmPassword ? "Hide confirmation password" : "Show confirmation password"}
+              className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-600 hover:text-[#4B6BFB]"
+            >
+              {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+            </button>
+          </div>
           {errors?.confirmPassword && <small className='text-red-700'>{errors.confirmPassword.message}</small>}
         </div>}
 
