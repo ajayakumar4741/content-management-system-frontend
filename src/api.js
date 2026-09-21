@@ -6,7 +6,14 @@ export const BASE_URL = import.meta.env.VITE_BASE_URL
 export function getMediaUrl(path) {
     if (!path) return ''
     if (/^https?:\/\//i.test(path)) return path
-    return `${BASE_URL}${path.replace(/^\//, '')}`
+
+    const baseUrl = (BASE_URL || '').replace(/\/+$/, '')
+    const mediaPath = path.replace(/^\/+/, '')
+    const normalizedPath = mediaPath.startsWith('media/')
+        ? mediaPath
+        : `media/${mediaPath}`
+
+    return `${baseUrl}/${normalizedPath}`
 }
 
 
