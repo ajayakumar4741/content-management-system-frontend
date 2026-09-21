@@ -156,6 +156,24 @@ function SignupPage({ updateForm, userInfo, toggleModal, setIsAuthenticated, set
         {errors?.username && <small className='text-red-700'>{errors.username.message}</small>}
       </div>
 
+      {!updateForm && <div className="flex flex-col gap-2 mb-2">
+        <Label htmlFor="email">Email</Label>
+        <Input
+          type="email"
+          id="email"
+          placeholder="Enter email"
+          {...register('email', {
+            required: 'Email is required',
+            pattern: {
+              value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+              message: 'Please enter a valid email address'
+            }
+          })}
+          className="border-2 border-[#141624] dark:border-[#3B3C4A] focus:outline-0 h-[40px] w-[300px]"
+        />
+        {errors?.email && <small className='text-red-700'>{errors.email.message}</small>}
+      </div>}
+
       <div className="flex flex-col gap-2 mb-2">
         <Label htmlFor="first_name">First Name</Label>
         <Input

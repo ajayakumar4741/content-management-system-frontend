@@ -119,6 +119,9 @@ function LoginPage({setIsAuthenticated,setUsername}) {
         <button disabled={mutation.isPending} className="bg-[#4B6BFB] text-white w-full py-3 px-2 rounded-md flex items-center justify-center gap-2">
           {mutation.isPending ? (<> <SmallSpinner /> <small className='text-[16px]'>Loging up...</small></>) : (<small className='text-[16px]'>Login</small>) }
         </button>
+        <Link to="/forgot-password" className="mt-3 text-sm text-blue-600 underline">
+          Forgot your password?
+        </Link>
         <p className="text-[14px]">
           Don't have an account? <Link to="/signup">signup</Link>
         </p>

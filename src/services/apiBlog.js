@@ -60,6 +60,16 @@ export async function signin(data){
     }
 }
 
+export async function requestPasswordReset(email) {
+    const response = await api.post('api/auth/password-reset/', { email })
+    return response.data
+}
+
+export async function confirmPasswordReset(uid, token, data) {
+    const response = await api.post(`api/auth/password-reset/${uid}/${token}/`, data)
+    return response.data
+}
+
 export async function getUsername(){
     try{
     const response = await api.get('get_username/')

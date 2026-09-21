@@ -12,6 +12,8 @@ import ProtectedRoute from './ui_components/ProtectedRoute'
 import { getUsername } from './services/apiBlog'
 import NotFoundPage from './pages/NotFoundPage'
 import ErrorBoundary from './pages/ErrorBoundary'
+import ForgotPasswordPage from './pages/ForgotPasswordPage'
+import ResetPasswordPage from './pages/ResetPasswordPage'
 
 const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID || ''
 function App() {
@@ -39,6 +41,8 @@ function App() {
           <Route path='/signup' element={<SignupPage setIsAuthenticated={setIsAuthenticated} setUsername={setUsername} />} />
           <Route path='/create_post' element={<ProtectedRoute><CreatePostPage isAuthenticated={isAuthenticated} /></ProtectedRoute>} />
           <Route path='/login' element={<ErrorBoundary><LoginPage setIsAuthenticated={setIsAuthenticated} setUsername={setUsername} /></ErrorBoundary>} />
+          <Route path='/forgot-password' element={<ForgotPasswordPage />} />
+          <Route path='/reset-password/:uid/:token' element={<ResetPasswordPage />} />
         </Route>
       </Routes>
     </BrowserRouter>
