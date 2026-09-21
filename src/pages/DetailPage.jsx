@@ -8,7 +8,7 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { useNavigate, useParams } from 'react-router-dom';
 import Spinner from '@/ui_components/Spinner';
 import { deleteBlog, getBlog } from '@/services/apiBlog';
-import { BASE_URL } from '@/api';
+import { getMediaUrl } from '@/api';
 import Modal from '@/ui_components/Modal';
 import CreatePostPage from './CreatePostPage';
 import { toast } from 'react-toastify';
@@ -74,7 +74,7 @@ function DetailPage({username,isAuthenticated}) {
         <div className="w-full aspect-video">
   <img
     className="w-full h-full object-fill rounded-sm"
-    src={`${BASE_URL}${blog.featured_image}`}
+    src={getMediaUrl(blog.featured_image)}
   />
 </div>
 <br />

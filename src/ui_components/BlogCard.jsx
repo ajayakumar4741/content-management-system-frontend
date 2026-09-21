@@ -2,7 +2,7 @@ import React from 'react'
 import Badge from './Badge'
 import CardFooter from './CardFooter'
 import { Link } from "react-router-dom";
-import { BASE_URL } from '@/api';
+import { getMediaUrl } from '@/api';
 
 function BlogCard({blog}) {
   return (
@@ -10,7 +10,7 @@ function BlogCard({blog}) {
       <Link to={`blogs/${blog.slug}`}>
       <div className="w-full h-[200px] border rounded-md overflow-hidden">
         <img
-          src={`${BASE_URL}${blog.featured_image}`}
+          src={getMediaUrl(blog.featured_image)}
           className="w-full h-full object-cover rounded-lg"
         />
       </div>

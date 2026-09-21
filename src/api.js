@@ -3,6 +3,12 @@ import { jwtDecode } from 'jwt-decode'
 
 export const BASE_URL = import.meta.env.VITE_BASE_URL
 
+export function getMediaUrl(path) {
+    if (!path) return ''
+    if (/^https?:\/\//i.test(path)) return path
+    return `${BASE_URL}${path.replace(/^\//, '')}`
+}
+
 
 
 
